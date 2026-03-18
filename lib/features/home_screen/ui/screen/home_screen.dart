@@ -43,17 +43,17 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            context.navigateTo(test());
+            //      context.navigateTo(test());
             // WidgetsBinding.instance.addPostFrameCallback((_) {
             //   if (!context.mounted) return;
-            //   showDialog(
-            //     context: context,
-            //     builder: (_) => AddContactDialog(
-            //       onContactAdded: () {
-            //         context.read<GetAllContactsCubit>().fetchContacts();
-            //       },
-            //     ),
-            //   );
+            showDialog(
+              context: context,
+              builder: (_) => AddContactDialog(
+                onContactAdded: () {
+                  context.read<GetAllContactsCubit>().fetchContacts();
+                },
+              ),
+            );
             // });
           },
           child: Icon(Icons.add),
@@ -94,14 +94,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class test extends StatelessWidget {
-  const test({super.key});
+// class test extends StatelessWidget {
+//   const test({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text("data")));
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(appBar: AppBar(title: Text("data")));
+//   }
+// }
 
 class CardWidget extends StatelessWidget {
   CardWidget({super.key, required this.contact});
