@@ -205,7 +205,6 @@
 //   }
 // }
 
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
@@ -226,6 +225,7 @@ class _TrueCallerOverlayState extends State<TrueCallerOverlay> {
   String lastFollowUpNotes = '';
   String priority = '';
   String stage = '';
+  bool _dataReceived = false;
 
   final List<Color> foundColors = const [
     Color(0xFFa2790d),
@@ -244,13 +244,21 @@ class _TrueCallerOverlayState extends State<TrueCallerOverlay> {
     super.initState();
     print("🔴 [TrueCallerOverlay] initState() called");
     _initOverlay();
+    // Future.delayed(const Duration(seconds: 3), () async {
+    //   if (!mounted) return;
+
+    //   if (!_dataReceived) {
+    //     print("🔴 [OVERLAY] no data received → closing self");
+    //     await FlutterOverlayWindow.closeOverlay();
+    //   }
+    // });
   }
 
   Future<void> _initOverlay() async {
     print("🔴 [TrueCallerOverlay] _initOverlay() started");
 
-    final isActive = await FlutterOverlayWindow.isActive();
-    print("🔴 [TrueCallerOverlay] isActive before close=$isActive");
+    // final isActive = await FlutterOverlayWindow.isActive();
+    // print("🔴 [TrueCallerOverlay] isActive before close=$isActive");
 
     _overlaySub?.cancel();
     print("🔴 [TrueCallerOverlay] previous subscription cancelled");
@@ -259,7 +267,9 @@ class _TrueCallerOverlayState extends State<TrueCallerOverlay> {
       (event) {
         print("🔴 [TrueCallerOverlay] overlayListener event received: $event");
         if (event == null || !mounted) {
-          print("🔴 [TrueCallerOverlay] event is null or widget not mounted, skipping");
+          print(
+            "🔴 [TrueCallerOverlay] event is null or widget not mounted, skipping",
+          );
           return;
         }
 
@@ -267,6 +277,7 @@ class _TrueCallerOverlayState extends State<TrueCallerOverlay> {
         print("🔴 [TrueCallerOverlay] parsed parts: $parts");
 
         setState(() {
+          _dataReceived = true;
           isFound = parts.isNotEmpty && parts[0] == 'found';
           name = parts.length > 2 ? parts[2] : '';
           phone = parts.length > 3 ? parts[3] : '';
@@ -275,7 +286,9 @@ class _TrueCallerOverlayState extends State<TrueCallerOverlay> {
           stage = parts.length > 6 ? parts[6] : '';
         });
 
-        print("🔴 [TrueCallerOverlay] state updated → isFound=$isFound, name=$name, phone=$phone");
+        print(
+          "🔴 [TrueCallerOverlay] state updated → isFound=$isFound, name=$name, phone=$phone",
+        );
       },
       onError: (error) {
         print("🔴 [TrueCallerOverlay] ❌ overlayListener error: $error");
@@ -303,7 +316,9 @@ class _TrueCallerOverlayState extends State<TrueCallerOverlay> {
 
   @override
   Widget build(BuildContext context) {
-    print("🔴 [TrueCallerOverlay] build() called → isFound=$isFound, name=$name");
+    print(
+      "🔴 [TrueCallerOverlay] build() called → isFound=$isFound, name=$name",
+    );
     final colors = isFound ? foundColors : notFoundColors;
 
     return Material(
@@ -378,7 +393,10 @@ class _TrueCallerOverlayState extends State<TrueCallerOverlay> {
                           const SizedBox(height: 12),
                           const Row(
                             children: [
-                              Icon(Icons.warning_amber_rounded, color: Colors.white),
+                              Icon(
+                                Icons.warning_amber_rounded,
+                                color: Colors.white,
+                              ),
                               SizedBox(width: 8),
                               Expanded(
                                 child: Text(

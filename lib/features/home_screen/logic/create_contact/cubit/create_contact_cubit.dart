@@ -17,14 +17,16 @@ class CreateContactCubit extends Cubit<CreateContactState> {
   final TextEditingController priorityController = TextEditingController();
   final TextEditingController stageController = TextEditingController();
 
-  //  close() {
-  //   nameController.dispose();
-  //   phoneController.dispose();
-  //   notesController.dispose();
-  //   priorityController.dispose();
-  //   stageController.dispose();
-
-  // }
+  @override
+  Future<void> close() {
+    // Dispose controllers to avoid leaking state across dialog openings/restarts.
+    nameController.dispose();
+    phoneController.dispose();
+    notesController.dispose();
+    priorityController.dispose();
+    stageController.dispose();
+    return super.close();
+  }
 
   Future<void> addContact(
     //ContactModel contact

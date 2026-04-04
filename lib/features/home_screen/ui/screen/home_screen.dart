@@ -19,27 +19,29 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // @override
-  // void initState() {
-  //   super.initState();
+  @override
+  void initState() {
+    super.initState();
 
-  //   _initOverlayAndPhoneState();
-  // }
+    _initOverlayAndPhoneState();
+  }
 
-  // Future<void> _initOverlayAndPhoneState() async {
-  //  // await DatabaseHelper.instance.database;
-  //   await checkOverlayPermissionOnce();
-  //   await PhoneStateService.init();
-  // }
+  Future<void> _initOverlayAndPhoneState() async {
+   // await DatabaseHelper.instance.database;
+   // await checkOverlayPermissionOnce();
+    await PhoneStateService.init();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => getIt<GetAllContactsCubit>()),
-        BlocProvider(create: (context) => getIt<CreateContactCubit>()),
-      ],
-      child: Scaffold(
+    return
+    //  MultiBlocProvider(
+    //   providers: [
+    //     BlocProvider(create: (context) => getIt<GetAllContactsCubit>()),
+    //     BlocProvider(create: (context) => getIt<CreateContactCubit>()),
+    //   ],
+    //  child:
+       Scaffold(
         appBar: AppBar(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -89,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return SizedBox();
           },
         ),
-      ),
+     // ),
     );
   }
 }

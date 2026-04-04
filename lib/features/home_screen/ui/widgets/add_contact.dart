@@ -36,10 +36,7 @@ class _AddContactDialogState extends State<AddContactDialog> {
           }
         },
         builder: (context, state) {
-
-          return 
-          
-          AlertDialog(
+          return AlertDialog(
             title: const Text('Add Contact'),
             content: SingleChildScrollView(
               child: Column(

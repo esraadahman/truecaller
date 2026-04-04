@@ -1,0 +1,66 @@
+late final TextScaler mainAppTextScaler;
+
+=>
+   here أنت عندك:
+
+Main App (engine)
+Overlay (engine تاني)
+
+Flutter لما بيستخدم:
+
+SystemTextScaler
+
+بيعمل call لـ JNI (Android native)
+
+❌ وده بيكسر لما يكون في 2 Flutter engines شغالين (زي overlay)
+
+solve the problem => 
+✅ الحل اللي الكود بيعمله
+
+بدل ما Flutter يستخدم:
+
+SystemTextScaler
+
+إنت بتعمل snapshot مرة واحدة:
+
+mainAppTextScaler = TextScaler.linear(
+  WidgetsBinding.instance.platformDispatcher.textScaleFactor,
+);
+
+👉 كده:
+
+خدت قيمة الـ text scale مرة واحدة
+ومنعت أي JNI calls بعد كده
+فـ مفيش crash مع overlay
+
+
+📌 الخلاصة
+
+السطر ده معمول علشان:
+
+✔ يأخر initialization لحد ما Flutter يبقى جاهز
+✔ يمنع crash بسبب overlay + JNI
+✔ يثبت القيمة بعد أول تحميل
+✔ يشتغل بأمان مع multi-engine (overlay)
+
+
+
+
+
+
+
+/****************************************************
+
+🔥 ليه Overlay + Android 12 بيعمل Crash في Flutter؟
+🧠 أول حاجة: إنت عندك مش Engine واحد!
+
+في حالتك:
+
+Main App
+Overlay Window
+
+👉 كل واحد منهم بيشغل:
+
+Flutter Engine مستقل
+UI مستقل
+Thread مستقل

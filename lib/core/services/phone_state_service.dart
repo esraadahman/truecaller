@@ -73,16 +73,13 @@
 //   }
 // }
 
-import 'package:flutter/material.dart';
 import 'package:phone_state/phone_state.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:truecaller/core/database/database_helper.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:truecaller/core/overlay_helper/overlay_functions.dart';
 
 class PhoneStateService {
   static bool _listening = false;
-
   static Future<void> init() async {
     print("📞 [PhoneStateService] init() called, _listening=$_listening");
     if (_listening) {
@@ -90,12 +87,12 @@ class PhoneStateService {
       return;
     }
 
-    var status = await Permission.phone.request();
-    print("📞 [PhoneStateService] phone permission status=$status");
-    if (!status.isGranted) {
-      print("📞 [PhoneStateService] ❌ permission not granted, aborting");
-      return;
-    }
+    // var status = await Permission.phone.request();
+    // print("📞 [PhoneStateService] phone permission status=$status");
+    // if (!status.isGranted) {
+    //   print("📞 [PhoneStateService] ❌ permission not granted, aborting");
+    //   return;
+    // }
 
     PhoneState.stream.listen((PhoneState? event) async {
       if (event == null || event.number == null) {
@@ -130,13 +127,10 @@ class PhoneStateService {
         );
         if (!hasPermission) return;
 
-        final isActive = await FlutterOverlayWindow.isActive();
-        print("📞 [PhoneStateService] overlay isActive=$isActive");
-        if (isActive) {
+        final overlayWasActive = await FlutterOverlayWindow.isActive();
+        if (overlayWasActive) {
           print("📞 [PhoneStateService] closing existing overlay...");
-          //    await FlutterOverlayWindow.closeOverlay();
-          //   await Future.delayed(const Duration(milliseconds: 300));
-          forceCloseOverlay();
+          await forceCloseOverlay();
           print("📞 [PhoneStateService] overlay closed");
         }
 
@@ -158,12 +152,10 @@ class PhoneStateService {
         print("📞 [PhoneStateService] data shared to overlay");
       } else if (callStatus == PhoneStateStatus.CALL_ENDED) {
         print("📞 [PhoneStateService] call ended");
-        final isActive = await FlutterOverlayWindow.isActive();
-        print("📞 [PhoneStateService] overlay isActive=$isActive on call end");
-        if (isActive) {
-          forceCloseOverlay();
-          print("📞 [PhoneStateService] overlay closed on call end");
-        }
+        // Close overlay when call ends, so the next app restart/hot-reload
+        // doesn't race with a still-running overlay engine.
+        await Future.delayed(const Duration(milliseconds: 100));
+        await forceCloseOverlay();
       }
     });
 
